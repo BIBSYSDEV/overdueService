@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>no.bibsys</groupId>
+        <artifactId>overdueNoticesService</artifactId>
+        <version>1.0.22-SNAPSHOT</version>
+    </parent>
+    <artifactId>overdueNoticesService-functional-tests</artifactId>
+    <name>overdueNoticesService WAR :: Functional Tests</name>
+    <packaging>pom</packaging>
+    <description>overdueNoticesService WAR Functional Tests</description>  
+   
+    <build>
+        <testSourceDirectory>src/it/java</testSourceDirectory>
+        <testResources>
+            <testResource>
+                <directory>src/it/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+    </build>   
+    
+    <dependencies>
+        <dependency>
+            <groupId>no.bibsys</groupId>
+            <artifactId>overdueNoticesService-war</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>       
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.jwebunit</groupId>
+            <artifactId>jwebunit-htmlunit-plugin</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>    
+    
+    <profiles>
+        <profile>
+            <id>functional-tests</id>
+            <activation>
+                <property>
+                    <name>functional-tests</name>
+                </property>
+            </activation>
+            
+            <build>
+                
+                <!-- We need to force the compiler plugin to compile tests and the surefire plugin to execute
+                them because we're using a pom packaging that doesn't have those mapped in its lifecycle.
+                A better solution would be for m2 to define a default integration-test lifecycle -->
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>testResources</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>applicationUrl</name>
+                                            <value>http://${tomcat-host}.bibsys.no/${context.root}</value>
+                                        </property>
+                                        <property>
+                                            <name>adgang_username</name>
+                                            <!-- From [USER_HOME]/.m2/settings.xml -->
+                                            <value>${adgang_username}</value>
+                                        </property>
+                                        <property>
+                                            <name>adgang_password</name>
+                                            <!-- From [USER_HOME]/.m2/settings.xml -->
+                                            <value>${adgang_password}</value>
+                                        </property>
+                                        <property>
+                                            <name>no.bibsys.conf</name>
+                                            <!-- From [USER_HOME]/.m2/settings.xml -->
+                                            <value>${no.bibsys.conf}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>deploy-tomcat</id>
+            <activation>
+                <property>
+                    <name>deploy-tomcat</name>
+                </property>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>1.0.5</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.codehaus.cargo</groupId>
+                                <artifactId>cargo-core-container-tomcat</artifactId>
+                                <version>1.0.5.0.1</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <wait>true</wait>
+                            <container>
+                                <containerId>tomcat7x</containerId>
+                                <type>remote</type>
+                            </container>
+                            <configuration>
+                                <type>runtime</type>
+                                <properties>
+                                    <cargo.tomcat.manager.url>http://${tomcat-host}.bibsys.no:8080/manager</cargo.tomcat.manager.url>
+                                    <cargo.remote.username>${tomcat.manager.script.username}</cargo.remote.username>
+                                    <cargo.remote.password>${tomcat.manager.script.password}</cargo.remote.password>
+                                    <cargo.logging>high</cargo.logging>
+                                </properties>
+                            </configuration>
+                            <deployer>
+                                <type>remote</type>
+                                <deployables>
+                                    <deployable>
+                                        <groupId>no.bibsys</groupId>
+                                        <!-- Remember to add as dependency in this pom -->
+                                        <artifactId>${project.parent.artifactId}-war</artifactId>
+                                        <type>war</type>
+                                        <properties>
+                                            <context>${context.root}</context>
+                                        </properties>
+                                        <pingURL>http://${tomcat-host}.bibsys.no:8080/${context.root}/status</pingURL>
+                                        <pingTimeout>20000</pingTimeout>
+                                    </deployable>
+                                </deployables>
+                            </deployer>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start-container</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>deployer-redeploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
