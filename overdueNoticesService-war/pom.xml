@@ -3,7 +3,7 @@
     <parent>
         <artifactId>overdueNoticesService</artifactId>
         <groupId>no.bibsys</groupId>
-        <version>1.0.22-SNAPSHOT</version>
+        <version>1.0.23-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>overdueNoticesService-war</artifactId>
@@ -166,10 +166,6 @@
 			<groupId>json-to-pdf</groupId>
   			<artifactId>json-to-pdf</artifactId>
 		</dependency>
-        <dependency>
-        	<groupId>no.bibsys</groupId>
-        	<artifactId>alma-services</artifactId>
-        </dependency>
         <dependency>
            	<groupId>mysql</groupId>
            	<artifactId>mysql-connector-java</artifactId>
