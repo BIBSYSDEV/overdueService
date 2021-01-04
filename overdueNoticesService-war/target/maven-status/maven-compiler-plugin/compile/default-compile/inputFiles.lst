@@ -41,6 +41,7 @@ E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\users\UserNote.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\user\ResearcherAlternateEmails.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\users\ResearcherExternalOrganizationAffiliations.java
+E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\userresourcesharingrequests\ObjectFactory.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\items\ParsedIssueLevelDescription.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\vendors\Note.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\users\ResearcherEngagementTypes.java
@@ -64,6 +65,7 @@ E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\bibs\Warning.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\partners\RapidDetails.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\user\UserRole.java
+E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\userresourcesharingrequests\RsNotes.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\users\ResearcherWebpages.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\vendors\Accounts.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\bibsys\overdueNotices\OverdueAnalyticsServiceImplementation.java
@@ -89,6 +91,7 @@ E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\bibsys\
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\users\ResearcherLanguages.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\partners\Partners.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\bibsys\overdueNotices\OverdueServiceImplementation.java
+E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\userresourcesharingrequests\UserResourceSharingRequest.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\users\ResearcherAssociations.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\partners\FulfillmentNetworkDetails.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\users\Phones.java
@@ -125,6 +128,7 @@ E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\unit\al
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\items\Items.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\partners\Iso18626Details.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\holdings\Holding.java
+E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\userresourcesharingrequests\RsNote.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\bibsys\overdueNotices\ReportServlet.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\users\ResearcherResearchTopics.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\vendors\Emails.java
@@ -143,6 +147,7 @@ E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\partners\Addresses.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\partners\Email.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\user\ResearcherNameVariant.java
+E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\userresourcesharingrequests\Amount.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\partners\InnreachDetails.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\bibsys\overdueNotices\Location.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\vendors\AdminInfo.java
@@ -199,6 +204,7 @@ E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\unit\al
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\userrequests\PageRange.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\bibsys\overdueNotices\OverdueApplication.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\partners\Address.java
+E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\userresourcesharingrequests\AdditionalBarcodes.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\unit\alma\commons\ApiAuthorizationService.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\target\generated-sources\xjc\no\unit\alma\generated\partners\EmailDetails.java
 E:\jobb\overdueNoticesService\overdueNoticesService-war\src\main\java\no\unit\alma\bibs\HoldingsRecord.java
