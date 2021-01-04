@@ -1,11 +1,12 @@
 package no.unit.alma.commons;
 
-import no.bibsys.vault.VaultClient;
+import java.util.Objects;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+import no.bibsys.vault.VaultClient;
 
 public class VaultApiAuthorization {
 

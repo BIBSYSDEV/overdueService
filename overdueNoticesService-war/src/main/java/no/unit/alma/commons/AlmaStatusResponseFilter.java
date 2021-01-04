@@ -1,6 +1,6 @@
 package no.unit.alma.commons;
 
-import no.unit.alma.error.WebServiceResult;
+import no.unit.alma.generated.error.WebServiceResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,11 @@ import javax.ws.rs.core.Response.Status.Family;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.stream.Collectors;
 
 

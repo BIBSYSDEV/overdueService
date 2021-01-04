@@ -11,10 +11,10 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.bibsys.alma.rest.AlmaBibService;
-import no.bibsys.alma.rest.AlmaItemRecord;
-import no.bibsys.alma.rest.ApiAuthorization;
 import no.bibsys.overdueNotices.OverdueServiceImplementation.OverdueLog;
+import no.unit.alma.bibs.AlmaItemsService;
+import no.unit.alma.commons.AlmaClient;
+import no.unit.alma.generated.items.Item;
 
 public class OverdueNoticeImplementation implements OverdueNotice {
 
@@ -51,25 +51,31 @@ public class OverdueNoticeImplementation implements OverdueNotice {
     private String startDateString = "1999-12-31";
     private String institutionServiceHost = "ada.bibsys.no";
 
-    public OverdueNoticeImplementation(String barcode, String dueDateString, String sentDateString, String lendingDateString, String lendingLibraryEmail,
-            String title, String author, String year, String publisherPlace, String publisher, String library,
-            String requestId, String location, String locationCode, String lendingLibraryCode) {
+    // TODO sett opp almaClient
+    private static final AlmaClient almaClient = null; 
+
+    public OverdueNoticeImplementation(String barcode, String dueDateString, String sentDateString,
+            String lendingDateString, String lendingLibraryEmail, String title, String author, String year,
+            String publisherPlace, String publisher, String library, String requestId, String location,
+            String locationCode, String lendingLibraryCode) {
         this();
 
-        this.lendingDateString = lendingDateString!=null?lendingDateString:"";
-        this.barcode = barcode!=null?barcode:"";
-        this.dueDateString = dueDateString!=null?dueDateString:"";
-        this.sentDateString = sentDateString!=null?sentDateString:"";
-        this.lendingLibraryEmail = (lendingLibraryEmail!=null&&!"".equals(lendingLibraryEmail))?lendingLibraryEmail:OverdueService.Factory.instance().findLocationEmail(library, lendingLibraryCode);
-        this.title = title!=null?title:"";
-        this.author = author!=null?author:"";
-        this.year = year!=null?year:"";
-        this.publisherPlace = publisherPlace!=null?publisherPlace:"";
-        this.publisher = publisher!=null?publisher:"";
-        this.library = library!=null?library:"";
-        this.requestId = requestId!=null?requestId:"";
-        this.location = location!=null?location:"";
-        this.lendingLibraryCode = lendingLibraryCode!=null?lendingLibraryCode:"";
+        this.lendingDateString = lendingDateString != null ? lendingDateString : "";
+        this.barcode = barcode != null ? barcode : "";
+        this.dueDateString = dueDateString != null ? dueDateString : "";
+        this.sentDateString = sentDateString != null ? sentDateString : "";
+        this.lendingLibraryEmail = (lendingLibraryEmail != null && !"".equals(lendingLibraryEmail))
+                ? lendingLibraryEmail
+                : OverdueService.Factory.instance().findLocationEmail(library, lendingLibraryCode);
+        this.title = title != null ? title : "";
+        this.author = author != null ? author : "";
+        this.year = year != null ? year : "";
+        this.publisherPlace = publisherPlace != null ? publisherPlace : "";
+        this.publisher = publisher != null ? publisher : "";
+        this.library = library != null ? library : "";
+        this.requestId = requestId != null ? requestId : "";
+        this.location = location != null ? location : "";
+        this.lendingLibraryCode = lendingLibraryCode != null ? lendingLibraryCode : "";
 
         Properties apiKeys = new Properties();
         String institutionProperties = "/fasehome/applikasjoner/almaws/institution.properties";
@@ -116,12 +122,12 @@ public class OverdueNoticeImplementation implements OverdueNotice {
 
     @Override
     public boolean secondNoticeSent() {
-        return sendt ;
+        return sendt;
     }
 
     @Override
     public boolean claimsSent() {
-        return sendt ;
+        return sendt;
     }
 
     @Override
@@ -151,7 +157,8 @@ public class OverdueNoticeImplementation implements OverdueNotice {
 
     @Override
     public String createThirdNotice() {
-        // Generate email to lending library. Lending library sends notice via ordinary mail.
+        // Generate email to lending library. Lending library sends notice via ordinary
+        // mail.
 
         String text = thirdNoticeText;
         status();
@@ -163,7 +170,8 @@ public class OverdueNoticeImplementation implements OverdueNotice {
 
     @Override
     public String createClaims() {
-        // Generate email to lending library. Lending library sends claims via ordinary mail.
+        // Generate email to lending library. Lending library sends claims via ordinary
+        // mail.
 
         String text = claimsText;
 
@@ -174,11 +182,11 @@ public class OverdueNoticeImplementation implements OverdueNotice {
     }
 
     @Override
-    public String setOverdueStatus(OverdueStatus status, boolean sent){
+    public String setOverdueStatus(OverdueStatus status, boolean sent) {
 
         Date today = new Date();
 
-        String fulfilmentNote = status.generateFulfilmentNote(today.toString()) + (sent?";sent":"");
+        String fulfilmentNote = status.generateFulfilmentNote(today.toString()) + (sent ? ";sent" : "");
         log.debug("------------ status ----------------");
         log.debug("status = " + status);
         log.debug("sent = " + sent);
@@ -187,9 +195,10 @@ public class OverdueNoticeImplementation implements OverdueNotice {
         OverdueService overdueService = OverdueService.Factory.instance();
         OverdueLog overdueLog = overdueService.findOverdueLog(barcode, library);
 
-        if(overdueLog.getId() > -1){
-            overdueService.updateOverdueLogStatus(overdueLog.getId(), status.name(), sent?"Overdue notice sent":"Overdue notice not sent");
-        }else{
+        if (overdueLog.getId() > -1) {
+            overdueService.updateOverdueLogStatus(overdueLog.getId(), status.name(),
+                    sent ? "Overdue notice sent" : "Overdue notice not sent");
+        } else {
             overdueService.addOverdueLog(barcode, status.name(), library);
         }
 
@@ -199,26 +208,23 @@ public class OverdueNoticeImplementation implements OverdueNotice {
     }
 
     private void updateFulfilmentNote(String barcode, OverdueStatus status) {
-        ApiAuthorization apiAuthorization = AlmaBibService.Factory.createApiAuthorizationString(NB_BIBKODE);
-        AlmaBibService.Factory.setInstitutionServiceHost(institutionServiceHost);
-        try{
-            AlmaItemRecord itemRecord = AlmaBibService.Factory.instance().retrieveItemRecord(barcode, apiAuthorization);
+        try {
+            AlmaItemsService itemService = new AlmaItemsService(almaClient);
+            Item itemRecord = itemService.getItem(barcode);
 
-            if(itemRecord != null && itemRecord.getResponse() != null && itemRecord.getResponse().success()){
-                String fulfillmentNote = itemRecord.getItem().getItemData().getFulfillmentNote();
-                if(fulfillmentNote != null && !fulfillmentNote.isEmpty()){
-                    fulfillmentNote += "|";
-                }else{
-                    fulfillmentNote = "";
-                }
-
-                String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                fulfillmentNote += status.generateFulfilmentNote(date);
-
-                itemRecord.getItem().getItemData().setFulfillmentNote(fulfillmentNote);
-
-                AlmaBibService.Factory.instance().updateItemRecord(itemRecord, apiAuthorization);
+            String fulfillmentNote = itemRecord.getItemData().getFulfillmentNote();
+            if(fulfillmentNote != null && !fulfillmentNote.isEmpty()){
+                fulfillmentNote += "|";
+            }else{
+                fulfillmentNote = "";
             }
+
+            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            fulfillmentNote += status.generateFulfilmentNote(date);
+
+            itemRecord.getItemData().setFulfillmentNote(fulfillmentNote);
+
+            itemService.updateItemDescription(itemRecord);
         }catch(Exception e){
             log.error("Exception when updating Fulfilmentnote: {}", e);
         }
@@ -251,20 +257,18 @@ public class OverdueNoticeImplementation implements OverdueNotice {
         OverdueStatus sentStatus = OverdueStatus.NOT_OVERDUE;
 
         OverdueService service = OverdueService.Factory.instance();
-        AlmaItemRecord itemRecord = service.retrieveItem(barcode, library);
+        Item itemRecord = service.retrieveItem(barcode, library);
 
-        if(itemRecord.getResponse().success()){
-            itemInPlace = "1".equals(itemRecord.getItem().getItemData().getBaseStatus().getValue());
+        itemInPlace = "1".equals(itemRecord.getItemData().getBaseStatus().getValue());
 
-            OverdueLog overdueLog = service.findOverdueLog(barcode, library);
+        OverdueLog overdueLog = service.findOverdueLog(barcode, library);
 
-            if(overdueLog.getId() > -1){
-                sentStatus = OverdueStatus.findStatusByText(overdueLog.getStatus());
-                Date sentDate = overdueLog.getTimestamp();
-                sentDateString = new SimpleDateFormat("yyyy-MM-dd").format(sentDate);
-                if(overdueDate.after(sentDate)){
-                    sentStatus = OverdueStatus.FIRST_NOTICE;
-                }
+        if(overdueLog.getId() > -1){
+            sentStatus = OverdueStatus.findStatusByText(overdueLog.getStatus());
+            Date sentDate = overdueLog.getTimestamp();
+            sentDateString = new SimpleDateFormat("yyyy-MM-dd").format(sentDate);
+            if(overdueDate.after(sentDate)){
+                sentStatus = OverdueStatus.FIRST_NOTICE;
             }
         }
 

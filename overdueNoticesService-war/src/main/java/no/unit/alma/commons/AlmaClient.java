@@ -1,23 +1,25 @@
 package no.unit.alma.commons;
 
-import com.typesafe.config.Config;
-import no.bibsys.vault.AppRole;
-import no.bibsys.vault.VaultClient;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.logging.LoggingFeature;
-import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Priorities;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Feature;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.logging.LoggingFeature;
+import org.glassfish.jersey.moxy.xml.MoxyXmlFeature;
+
+import com.typesafe.config.Config;
+
+import no.bibsys.vault.AppRole;
+import no.bibsys.vault.VaultClient;
 
 public class AlmaClient {
 
-    public static final int MAX_ENTITY_SIZE = 1024 * 1024;
     private final WebTarget webTarget;
     private final String contextValue;
 
@@ -34,11 +36,11 @@ public class AlmaClient {
      */
     public AlmaClient(Client client, Config config, String bibCode) {
         this(client,
-            config,
-            VaultClient.builder()
-                .withCredentials(AppRole.from(config.getString("roleId"), config.getString("secretId")))
-                .build(),
-            bibCode);
+                config,
+                VaultClient.builder()
+                        .withCredentials(AppRole.from(config.getString("roleId"), config.getString("secretId")))
+                        .build(),
+                bibCode);
     }
 
     /**
@@ -51,16 +53,16 @@ public class AlmaClient {
      */
     public AlmaClient(Client client, Config config, VaultClient vaultClient, String bibCode) {
         this(client, config,
-            ApiAuthorizationService.builder()
-                .vaultClient(vaultClient)
-                .environment(config.getString("environment"))
-                .build(),
-            bibCode);
+                ApiAuthorizationService.builder()
+                        .vaultClient(vaultClient)
+                        .environment(config.getString("environment"))
+                        .build(),
+                bibCode);
     }
 
     /**
      * Alma Client constructor with ApiAuthorizationService. *
-     *
+     * 
      * @param client                  A WS-RS-client
      * @param config                  Application config
      * @param apiAuthorizationService ApiAuthorizationService
@@ -70,21 +72,20 @@ public class AlmaClient {
         Objects.requireNonNull(client, "JAX-RS rest client must be provided");
         Objects.requireNonNull(apiAuthorizationService, "Alma API authorization is required");
         VaultApiAuthorization apiAuthorization =
-            apiAuthorizationService.getApiAuthorization(bibCode);
+                apiAuthorizationService.getApiAuthorization(bibCode);
 
         Logger logger = Logger.getLogger(getClass().getName());
-        Feature loggerFeature = new LoggingFeature(logger, Level.INFO, LoggingFeature.Verbosity.PAYLOAD_TEXT,
-            MAX_ENTITY_SIZE);
+        Feature loggerFeature = new LoggingFeature(logger, Level.INFO, null, null);
 
         this.webTarget =
-            client
-                .property(ClientProperties.CONNECT_TIMEOUT, connectTimeout)
-                .property(ClientProperties.READ_TIMEOUT, readTimeout)
-                .register(MoxyXmlFeature.class)
-                .register(new AlmaAuthorizationRequestFilter(apiAuthorization), Priorities.AUTHORIZATION)
-                .register(loggerFeature)
-                .register(AlmaStatusResponseFilter.class, Priorities.ENTITY_CODER)
-                .target(config.getString("almaApiUrl"));
+                client
+                        .property(ClientProperties.CONNECT_TIMEOUT, connectTimeout)
+                        .property(ClientProperties.READ_TIMEOUT, readTimeout)
+                        .register(MoxyXmlFeature.class)
+                        .register(new AlmaAuthorizationRequestFilter(apiAuthorization), Priorities.AUTHORIZATION)
+                        .register(loggerFeature)
+                        .register(AlmaStatusResponseFilter.class, Priorities.ENTITY_CODER)
+                        .target(config.getString("almaBaseUrl"));
         this.contextValue = apiAuthorization.getOrganization();
     }
 

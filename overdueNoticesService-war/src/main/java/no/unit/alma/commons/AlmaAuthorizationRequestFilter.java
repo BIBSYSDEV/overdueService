@@ -1,8 +1,9 @@
 package no.unit.alma.commons;
 
+import java.io.IOException;
+
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
-import java.io.IOException;
 
 public class AlmaAuthorizationRequestFilter implements ClientRequestFilter {
 

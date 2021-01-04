@@ -4,8 +4,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import no.bibsys.alma.rest.AlmaItemRecord;
 import no.bibsys.overdueNotices.OverdueServiceImplementation.OverdueLog;
+import no.unit.alma.generated.items.Item;
 
 public interface OverdueService {
 
@@ -34,7 +34,7 @@ public interface OverdueService {
 	public List<String> createClaimsReport(String library);
 //	public Library retrievePartner(String libraryCode, String partnerCode);
 	public List<Location> retrieveLocations(String libraryCode);
-	public AlmaItemRecord retrieveItem(String barcode, String library);
+	public Item retrieveItem(String barcode, String library);
 //	public AlmaItemRecord updateItemRecord(AlmaItemRecord itemRecord, String library);
 	public List<String> allItems(String library);
 	Map<String, Location> allPartners(String library);

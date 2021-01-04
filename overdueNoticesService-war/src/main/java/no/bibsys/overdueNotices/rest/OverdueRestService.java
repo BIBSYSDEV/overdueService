@@ -28,7 +28,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-import no.bibsys.overdueNotices.AnalyticsService;
+import no.bibsys.overdueNotices.OverdueAnalyticsService;
 import no.bibsys.overdueNotices.Location;
 import no.bibsys.overdueNotices.OverdueNotice;
 import no.bibsys.overdueNotices.OverdueNotice.OverdueStatus;
@@ -72,7 +72,7 @@ public class OverdueRestService {
 	public Response getOverdueNoticePresentation(@ApiParam(value = "library", required = true) @PathParam("library") String library, @ApiParam(value = "barcode", required = true) @PathParam("barcode") String barcode){
 
 
-		OverdueNotice overdueNotice = AnalyticsService.Factory.instance(institutionServiceHost).getOverdueNotice(barcode, library);
+		OverdueNotice overdueNotice =OverdueAnalyticsService.Factory.instance(institutionServiceHost).getOverdueNotice(barcode, library);
 
 		String presentation = overdueNotice.reportPresentation();
 		List<String> presentationValues = Arrays.asList(presentation.split("\\|"));
@@ -100,7 +100,7 @@ public class OverdueRestService {
 
 		ObjectMapper mapper = new ObjectMapper();
 		
-		List<OverdueNotice> analyticsReport = AnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
+		List<OverdueNotice> analyticsReport = OverdueAnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
 		Collections.sort(analyticsReport);
 
 

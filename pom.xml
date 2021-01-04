@@ -80,11 +80,6 @@
         <dependencies>
             <dependency>
                 <groupId>no.bibsys</groupId>
-                <artifactId>logging-commons</artifactId>
-                <version>0.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>no.bibsys</groupId>
                 <artifactId>bibsys-utils</artifactId>
                 <version>1.0.27</version>
             </dependency>
@@ -111,26 +106,41 @@
             </dependency>
             
             <dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>${jersey.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-server</artifactId>
-                <version>${jersey.version}</version>
-            </dependency>
-            <dependency>
+                <groupId>org.glassfish.jersey.inject</groupId>
+                <artifactId>jersey-hk2</artifactId>
+                <version>2.30.1</version>
+              </dependency>
+              <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-moxy</artifactId>
+                <version>2.30.1</version>
+              </dependency>
+              <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-jaxb</artifactId>
+                <version>2.30.1</version>
+              </dependency>
+              <dependency>
                 <groupId>org.glassfish.jersey.media</groupId>
                 <artifactId>jersey-media-json-jackson</artifactId>
-                <version>${jersey.version}</version>
+                <version>2.30.1</version>
+              </dependency>
+              <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>2.30.1</version>
+              </dependency>
+              <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>2.30.1</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey.containers</groupId>
                 <artifactId>jersey-container-servlet</artifactId>
-                <version>${jersey.version}</version>
+                <version>2.30.1</version>
             </dependency>
-            
+                    
 			<dependency>
                 <groupId>com.wordnik</groupId>
                 <artifactId>swagger-jersey2-jaxrs_2.11</artifactId>
@@ -165,7 +175,7 @@
             <dependency>
   				<groupId>json-to-pdf</groupId>
   				<artifactId>json-to-pdf</artifactId>
-  				<version>0.7.5</version>
+  				<version>0.8.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>
@@ -244,6 +254,10 @@
             <id>bibsys-third-party</id>
             <name>Bibsys third-party repository</name>
             <url>http://artifactory.unit.no/artifactory/third-party</url>
+          </repository>
+          <repository>
+            <id>clojars.org</id>
+            <url>http://clojars.org/repo</url>
           </repository>
     </repositories>
     <profiles>

@@ -48,17 +48,18 @@ import org.slf4j.LoggerFactory;
 import org.yogthos.JsonPDF;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lowagie.text.pdf.PdfPageEventHelper;
 
-import no.bibsys.alma.rest.AlmaBibService;
-import no.bibsys.alma.rest.AlmaItemRecord;
-import no.bibsys.alma.rest.AlmaResponse;
-import no.bibsys.alma.rest.ApiAuthorization;
-import no.bibsys.alma.rest.RestJaxrsPartner;
-import no.bibsys.alma.rest.partner.Address;
-import no.bibsys.alma.rest.partner.Email;
-import no.bibsys.alma.rest.partner.Partner;
-import no.bibsys.alma.rest.partner.Partners;
 import no.bibsys.overdueNotices.OverdueNotice.OverdueStatus;
+import no.unit.alma.analytics.AlmaAnalyticsService;
+import no.unit.alma.bibs.AlmaItemsService;
+import no.unit.alma.commons.AlmaClient;
+import no.unit.alma.generated.items.Item;
+import no.unit.alma.generated.partners.Address;
+import no.unit.alma.generated.partners.Email;
+import no.unit.alma.generated.partners.Partner;
+import no.unit.alma.generated.partners.Partners;
+import no.unit.alma.partners.AlmaPartnersService;
 
 public class OverdueServiceImplementation implements OverdueService {
 
@@ -127,10 +128,13 @@ public class OverdueServiceImplementation implements OverdueService {
 
     private static final Map<String, Map<String, Location>> locationMap = new ConcurrentHashMap<>();
 
+    // TODO sett opp almaClient
+    private static final AlmaClient almaClient = null;
+
     private final Properties overdueProperties;
     boolean test = true;
     String[] emails = new String[0];
-    private final Map<String, Map<String, AlmaItemRecord>> libraryItemMap = new HashMap<>();
+    private final Map<String, Map<String, Item>> libraryItemMap = new HashMap<>();
 
     private Map<String, String> logAdressMap = new HashMap<>();
 
@@ -165,7 +169,7 @@ public class OverdueServiceImplementation implements OverdueService {
             .forEach(addressArr -> logAdressMap.put(addressArr[0], addressArr[1]));
 
             institutionServiceHost = overdueProperties.getProperty("institutionhost", "ada.bibsys.no:8082");
-            AlmaBibService.Factory.setInstitutionServiceHost(institutionServiceHost);
+            // AlmaBibService.Factory.setInstitutionServiceHost(institutionServiceHost);
         } catch (IOException e) {
             log.error("Unable to load properties: " + institutionPropertiesFile);
         }
@@ -216,7 +220,7 @@ public class OverdueServiceImplementation implements OverdueService {
 
     @Override
     public List<String> sendClaims(String library, String locationName, String emailAdress) {
-        List<OverdueNotice> analyticsReport = AnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
+        List<OverdueNotice> analyticsReport = OverdueAnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
 
         log.debug("-----------------------------");
         log.debug("email = " + emailAdress);
@@ -375,7 +379,7 @@ public class OverdueServiceImplementation implements OverdueService {
     }
     @Override
     public List<String> sendFirstNotice(String library, String locationName, String email) {
-        List<OverdueNotice> analyticsReport = AnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
+        List<OverdueNotice> analyticsReport = OverdueAnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
 
         List<String> firstNoticeList = new ArrayList<>();
 
@@ -463,7 +467,7 @@ public class OverdueServiceImplementation implements OverdueService {
     }
     @Override
     public List<String> sendSecondNotice(String library, String locationName, String email) {
-        List<OverdueNotice> analyticsReport = AnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
+        List<OverdueNotice> analyticsReport = OverdueAnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
 
         String headerText = OverdueText.second_notice_header_text;
         String footerText = OverdueText.second_notice_footer_text;
@@ -546,7 +550,7 @@ public class OverdueServiceImplementation implements OverdueService {
     }
     @Override
     public List<String> sendThirdNotice(String library, String locationName, String email) {
-        List<OverdueNotice> analyticsReport = AnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
+        List<OverdueNotice> analyticsReport = OverdueAnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
 
         String headerText = OverdueText.third_notice_header_text;
         String footerText = OverdueText.third_notice_footer_text;
@@ -641,7 +645,7 @@ public class OverdueServiceImplementation implements OverdueService {
 
         log.debug("pdf-file = " + pdfPath + fileName);
         try {
-            JsonPDF.writeToStream(new ByteArrayInputStream(pdfText.getBytes(Charset.forName("UTF-8"))), new FileOutputStream( pdfPath + fileName));
+            JsonPDF.writeToStream(new ByteArrayInputStream(pdfText.getBytes(Charset.forName("UTF-8"))), new FileOutputStream( pdfPath + fileName), null);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             log.error("--------------------------------------------------------");
@@ -661,7 +665,7 @@ public class OverdueServiceImplementation implements OverdueService {
     public List<String> createClaimsReport(String library) {
 
         List<String> claimsReport = new ArrayList<>();
-        List<OverdueNotice> analyticsReport = AnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
+        List<OverdueNotice> analyticsReport = OverdueAnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
         for (OverdueNotice overdueNotice : analyticsReport) {
             OverdueStatus status = overdueNotice.status();
             if(status == OverdueStatus.CLAIMS&&overdueNotice.itemInPlace()){
@@ -676,13 +680,13 @@ public class OverdueServiceImplementation implements OverdueService {
 
         String itemStatus = "";
 
-        AlmaItemRecord itemRecord = retrieveItem(overdueNotice.barcode(), library);
+        Item itemRecord = retrieveItem(overdueNotice.barcode(), library);
         String lendingLibraryCode = overdueNotice.lendingLibraryCode();
         Map<String, Location> allPartners = allPartners(library);
         Location partner = allPartners.get(lendingLibraryCode);
         log.debug(partner.toString());
         itemStatus = overdueNotice.barcode() + "|" + 
-                itemRecord.getItem().getBibData().getTitle() + "|" + 
+                itemRecord.getBibData().getTitle() + "|" + 
                 lendingLibraryCode + "|" +
                 partner.getName();
 
@@ -714,58 +718,56 @@ public class OverdueServiceImplementation implements OverdueService {
 
         if(locationsList == null&&!loading){
             partnersLoading.add(libraryCode);
-            ApiAuthorization apiAuthorization = AlmaBibService.Factory.createApiAuthorizationString(libraryCode);
             locationsList = new ConcurrentHashMap<>();
-            AlmaResponse<Partners> partnersResponse = null;
-            partnersResponse = RestJaxrsPartner.Factory.create().retrievePartners(apiAuthorization);
+            AlmaPartnersService partnerService = new AlmaPartnersService(almaClient);
+            // TODO finn ut hvordan retrievePartners kalles
+            Partners partnersResponse = partnerService.retrievePartners(null, null, null, 1, 100);
 
-            if(partnersResponse.success()){
-                List<Partner> partnerList = partnersResponse.resultObject().getPartner();
+                List<Partner> partnerList = partnersResponse.getPartner();
 
                 for (Partner partner : partnerList) {
 
-                    if(partner != null){
-                        String name = partner.getPartnerDetails().getName();
-                        String code = partner.getPartnerDetails().getCode();
-                        try{
-                            Address address = partner.getContactInfo().getAddresses().getAddress().iterator().next();
-                            String postalCode = address.getPostalCode();
-                            String city = address.getCity();
-                            String adressLine = address.getLine1();
-                            List<Email> emailList = partner.getContactInfo().getEmails().getEmail();
+                if(partner != null){
+                    String name = partner.getPartnerDetails().getName();
+                    String code = partner.getPartnerDetails().getCode();
+                    try{
+                        Address address = partner.getContactInfo().getAddresses().getAddress().iterator().next();
+                        String postalCode = address.getPostalCode();
+                        String city = address.getCity();
+                        String adressLine = address.getLine1();
+                        List<Email> emailList = partner.getContactInfo().getEmails().getEmail();
 
-                            Location library = new Location();
-                            library.setName(name);
-                            library.setPostalCode(postalCode);
-                            library.setCity(city);
-                            library.setCode(code);
-                            library.setAddress(adressLine);
-                            library.setEmail("");
-                            if(emailList.size() > 0){
-                                for (Email email : emailList) {
-                                    if(email.getEmailAddress() != null && !"".equals(email.getEmailAddress())){
-                                        library.setEmail(email.getEmailAddress().toLowerCase());
-                                        break;
-                                    }
+                        Location library = new Location();
+                        library.setName(name);
+                        library.setPostalCode(postalCode);
+                        library.setCity(city);
+                        library.setCode(code);
+                        library.setAddress(adressLine);
+                        library.setEmail("");
+                        if(emailList.size() > 0){
+                            for (Email email : emailList) {
+                                if(email.getEmailAddress() != null && !"".equals(email.getEmailAddress())){
+                                    library.setEmail(email.getEmailAddress().toLowerCase());
+                                    break;
                                 }
                             }
-                            locationsList.put(code, library);
-                        }catch(Exception e){
-
                         }
+                        locationsList.put(code, library);
+                    }catch(Exception e){
+
                     }
                 }
-                locationMap.put(libraryCode, locationsList);
-                partnersLoading.remove(libraryCode);
-                loading = false;
             }
+            locationMap.put(libraryCode, locationsList);
+            partnersLoading.remove(libraryCode);
+            loading = false;
         }
 
         return locationsList;
     }
 
     private void retrieveAllItems(String libraryCode){
-        AnalyticsService analyticsService = AnalyticsService.Factory.instance(institutionServiceHost);
+        OverdueAnalyticsService analyticsService = OverdueAnalyticsService.Factory.instance(institutionServiceHost);
         Stream<OverdueNotice> stream = analyticsService.getAnalyticsReport(libraryCode).stream();
         stream.forEach(overdueNotice -> retrieveItem(overdueNotice.barcode(), libraryCode));
     }
@@ -795,10 +797,12 @@ public class OverdueServiceImplementation implements OverdueService {
     }
 
     @Override
-    public AlmaItemRecord retrieveItem(String barcode, String library) {
-        Map<String, AlmaItemRecord> myItemMap = this.libraryItemMap.computeIfAbsent(library, k -> new HashMap<>());
+    public Item retrieveItem(String barcode, String library) {
+        Map<String, Item> myItemMap = this.libraryItemMap.computeIfAbsent(library, k -> new HashMap<>());
 
-        AlmaItemRecord item = myItemMap.computeIfAbsent(barcode, v -> AlmaBibService.Factory.instance().retrieveItemRecord(barcode, AlmaBibService.Factory.createApiAuthorizationString(library)));
+        AlmaItemsService itemService = new AlmaItemsService(almaClient);
+
+        Item item = myItemMap.computeIfAbsent(barcode, v -> itemService.getItem(barcode));
 
         return item;
     }
@@ -806,7 +810,7 @@ public class OverdueServiceImplementation implements OverdueService {
     @Override
     public List<String> allItems(String library) {
 
-        Map<String, AlmaItemRecord> map = libraryItemMap.computeIfAbsent(library, m -> {
+        Map<String, Item> map = libraryItemMap.computeIfAbsent(library, m -> {
             retrieveAllItems(library);
             return libraryItemMap.get(library);
         });
@@ -1035,7 +1039,7 @@ public class OverdueServiceImplementation implements OverdueService {
         String pdfHeaderText = OverdueText.pdf_third_notice_header_text;
         String pdfFooterText = OverdueText.pdf_third_notice_footer_text;
         
-        List<OverdueNotice> analyticsReport = AnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
+        List<OverdueNotice> analyticsReport = OverdueAnalyticsService.Factory.instance(institutionServiceHost).getAnalyticsReport(library);
 
         Map<String, Location> lendingLocationsMap = locationMap.get(library);
         

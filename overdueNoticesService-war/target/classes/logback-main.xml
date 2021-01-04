@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <include resource="logback-template.xml"/>
+
+    <property name="pattern" 
+          value="%d{dd MMM yyyy HH:mm:ss.SSS} %-5level %-15([%thread]) [%class.%method:%line] - %mdc{aspect} - [ID:%X{SESSION_ID}-%X{REQUEST_ID}-%X{USERNAME}] - [%mdc{CONTAINER_ID}] - %marker - %m%n" />
+
+	<property name="joblogpattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} %-5level - %m%n" />
+
+	<property name="smtpHost" value="smtp.bibsys.no" />
+
+	<appender name="CHECK-IN-OUT-FILE"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>/fasehome/applogs/${CONTEXT_NAME:-UNKNOWN}/extra/%d{yyyy-MM-dd}-%d{HHmmss,aux}_${HOSTNAME}_%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 100MB -->
+				<maxFileSize>100MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+
+			<!-- keep 90 days' worth of history -->
+			<maxHistory>90</maxHistory>
+
+		</rollingPolicy>
+
+		<encoder>
+			<pattern>%d{dd MMM yyyy HH:mm:ss.SSS},%level,%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="ERROR_EMAIL_LOG" class="ch.qos.logback.classic.net.SMTPAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+			<marker>ERROR_EMAIL</marker>
+		</evaluator>
+		<discriminator class="ch.qos.logback.classic.sift.MDCBasedDiscriminator">
+			<key>ERROR_DATE</key>
+			<defaultValue>default</defaultValue>
+		</discriminator>
+		
+		<smtpHost>${smtpHost}</smtpHost>
+		<to>%mdc{to}</to>
+		<from>audi@bibsys.no</from>
+		<subject>${HOSTNAME} - OVERDUE ERROR EMAIL - %d{yyyy-MM-dd HH:mm:ss}</subject>
+		<includeCallerData>true</includeCallerData>
+		<asynchronousSending>false</asynchronousSending>
+		
+		<layout class="ch.qos.logback.classic.html.HTMLLayout">
+			<!--  <pattern>%level%msg</pattern> -->
+			<pattern>%d{dd MMM yyyy HH:mm:ss.SSS}%level%thread%class%method%line%msg</pattern>
+		</layout>
+		<cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+			<!-- send max 256 log entries per email -->
+			<bufferSize>256</bufferSize>
+			<timeout>3600000</timeout>
+		</cyclicBufferTracker>
+	</appender>
+
+<!-- 
+	<appender name="EMAILJOBS" class="ch.qos.logback.classic.net.SMTPAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+			<marker>AUDI_JOB_AUDIT</marker>
+			<marker>AUDI_JOB_FAILURE</marker>
+		</evaluator>
+		<discriminator class="ch.qos.logback.classic.sift.MDCBasedDiscriminator">
+			<key>AUDI_JOB_ID</key>
+			<defaultValue>default</defaultValue>
+		</discriminator>
+		<smtpHost>${smtpHost}</smtpHost>
+		<to>%mdc{to}</to>
+		<from>audi@bibsys.no</from>
+		<subject>%mdc{AUDI_JOB_ID} @ %d{yyyy-MM-dd HH:mm:ss}</subject>
+		<includeCallerData>true</includeCallerData>
+		<layout class="ch.qos.logback.classic.html.HTMLLayout">
+			<pattern>%level%msg</pattern>
+		</layout>
+		<cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+			<bufferSize>256</bufferSize>
+			<timeout>3600000</timeout>
+		</cyclicBufferTracker>
+
+	</appender>
+ -->
+
+<!--
+	<appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+	    <appender-ref ref="FILE" />
+	    <includeCallerData>true</includeCallerData>
+  	</appender>
+
+	<appender name="ASYNCCONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+	    <appender-ref ref="CONSOLE" />
+	    <includeCallerData>true</includeCallerData>
+  	</appender>
+-->
+
+
+	<root level="${root.level:-debug}"> <!-- override in ${PROJECT_BASEDIR}/logback-local.properties -->
+		<!-- you can access system properties, logback properties or special variables 
+			like HOSTNAME and CONTEXT_NAME -->
+
+<!--
+		<if condition='"${root.log_to_console}" == "true"'>
+			<then>
+				<appender-ref ref="ASYNCCONSOLE" />
+				<appender-ref ref="ASYNC" />
+			</then>
+			<else>
+				<appender-ref ref="ASYNC" />
+			</else>
+		</if>
+        -->
+		<appender-ref ref="ERROR_EMAIL_LOG" />
+	<!-- 	<appender-ref ref="EMAILJOBS" />  -->
+	</root>
+
+	<!-- additivity=false can be added to ensure data only goes to the specific log -->
+	<logger name="checkinout" level="INFO">
+		<appender-ref ref="CHECK-IN-OUT-FILE"/>
+	</logger>
+
+	<logger name="org.glassfish.jersey">
+		<level value="WARN" />
+	</logger>
+    <logger name="org.quartz">
+		<level value="WARN" />
+	</logger>
+    <logger name="org.codehaus.janino">
+		<level value="WARN" />
+	</logger>
+</configuration>

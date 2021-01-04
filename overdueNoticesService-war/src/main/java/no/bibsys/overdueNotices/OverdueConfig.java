@@ -10,9 +10,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.bibsys.alma.rest.AlmaBibService;
-import no.bibsys.alma.rest.ApiAuthorization;
-
 public class OverdueConfig {
 
 	private static class LazyLoader {
@@ -90,28 +87,6 @@ public class OverdueConfig {
 		getInstance().loadProperties();
 	}
 
-
-	public static ApiAuthorization getNBApiAuthorization() {
-		return AlmaBibService.Factory.createApiAuthorizationString(OverdueConfig.getNBInstitutionID());
-	}
-
-	public static ApiAuthorization getNetworkApiAuthorization() {
-		return AlmaBibService.Factory.createApiAuthorizationString(OverdueConfig.getNetworkID());
-	}
-	
-	private static String getNetworkID() {
-		return getProperty("NETWORK_INSTITUTION_ID");
-	}
-
-	private static String getNBInstitutionID() {
-		return getProperty("NB_INSTITUTION_ID");
-	}
-
-	public static ApiAuthorization getApiAuthorization(String institutionKey) {
-		return AlmaBibService.Factory.createApiAuthorizationString(institutionKey);
-	}
-
-
 	public static String getProperty(String propertyName) {
 	    return getInstance().properties.getProperty(propertyName);
 	}
@@ -125,6 +100,4 @@ public class OverdueConfig {
 	public static String getApikey(String institutionId) {
 		return getInstance().apikeys.getProperty(institutionId);
 	}
-
-
 }

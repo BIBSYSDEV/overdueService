@@ -1,0 +1,7 @@
+#username: password[,rolename ...]
+#where:
+#
+#username is the user's unique identity 
+#password is the user's (possibly obfuscated or MD5 encrypted) password 
+#rolename is the user's role
+USERNAME: PASSWORD, bibsysansatt

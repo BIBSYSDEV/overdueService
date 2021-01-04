@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<!-- =============================================================== -->
+<!-- Configure the Jetty Server                                      -->
+<!--                                                                 -->
+<!-- Documentation of this file format can be found at:              -->
+<!-- http://docs.codehaus.org/display/JETTY/jetty.xml                -->
+<!--                                                                 -->
+<!-- =============================================================== -->
+
+
+<Configure id="Server" class="org.mortbay.jetty.Server">
+
+     <!-- =========================================================== -->
+     <!-- Set handler Collection Structure                            -->
+     <!-- =========================================================== -->
+     <Set name="handler">
+       <New id="handlers" class="org.mortbay.jetty.handler.HandlerCollection">
+         <Set name="handlers">
+          <Array type="org.mortbay.jetty.Handler">
+            <Item>
+              <New id="contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection"/>
+            </Item>
+            <Item>
+              <New id="defaultHandler" class="org.mortbay.jetty.handler.DefaultHandler"/>
+            </Item>
+          </Array>
+         </Set>
+       </New>
+     </Set>
+
+
+     <!-- ======================================================= -->
+     <!-- Configure a Context                                     -->
+     <!-- ======================================================= -->
+     <New class="org.mortbay.jetty.servlet.Context">
+       <Arg><Ref id="contexts"/></Arg>
+       <Arg>/</Arg>
+       <Set name="resourceBase"><SystemProperty name="static_content_document_root" default="/workspace/webadm/htdocs"/></Set>
+       <Call name="addServlet">
+         <Arg>org.mortbay.jetty.servlet.DefaultServlet</Arg>
+         <Arg>/</Arg>
+       </Call>
+     </New>
+
+</Configure>

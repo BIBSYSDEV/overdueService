@@ -1,8 +1,7 @@
 package no.unit.alma.commons;
 
-
-import no.unit.alma.error.WebServiceResult;
-import no.unit.alma.error.Error;
+import no.unit.alma.generated.error.Error;
+import no.unit.alma.generated.error.WebServiceResult;
 
 import java.io.IOException;
 
@@ -70,10 +69,10 @@ public class HttpStatusException extends IOException {
     private void setError() {
         if (webServiceResult != null && this.webServiceResult.isErrorsExist()
                 && this.getWebServiceResult().getErrorList() != null
-                && this.getWebServiceResult().getErrorList().getErrors() != null
-                && !this.getWebServiceResult().getErrorList().getErrors().isEmpty()) {
+                && this.getWebServiceResult().getErrorList().getError() != null
+                && !this.getWebServiceResult().getErrorList().getError().isEmpty()) {
 
-            this.error = this.getWebServiceResult().getErrorList().getErrors().get(0);
+            this.error = this.getWebServiceResult().getErrorList().getError().get(0);
         }
     }
 
