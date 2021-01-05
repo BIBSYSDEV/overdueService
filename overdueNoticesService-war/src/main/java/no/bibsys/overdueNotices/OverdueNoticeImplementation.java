@@ -8,6 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +53,10 @@ public class OverdueNoticeImplementation implements OverdueNotice {
     private String year;
     private String publisherPlace;
     private String startDateString = "1999-12-31";
-    private String institutionServiceHost = "ada.bibsys.no";
 
-    // TODO sett opp almaClient
-    private static final AlmaClient almaClient = null; 
+	private static final String NB_BIBCODE = "g";
+	private Config config = ConfigFactory.load();
+    AlmaClient almaClient = new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE);
 
     public OverdueNoticeImplementation(String barcode, String dueDateString, String sentDateString,
             String lendingDateString, String lendingLibraryEmail, String title, String author, String year,
@@ -90,7 +94,6 @@ public class OverdueNoticeImplementation implements OverdueNotice {
             overdueProperties = new Properties();
             overdueProperties.load(reader);
             startDateString = overdueProperties.getProperty("startdate");
-            institutionServiceHost = overdueProperties.getProperty("institutionhost");
         } catch (IOException e) {
             log.error("Failed to load properties: " + institutionProperties);
         }

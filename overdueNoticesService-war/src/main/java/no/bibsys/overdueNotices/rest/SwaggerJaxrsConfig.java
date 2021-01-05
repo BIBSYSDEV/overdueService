@@ -39,8 +39,6 @@ public class SwaggerJaxrsConfig implements Filter {
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
-    private static final long serialVersionUID = -4172507378920810604L;
-
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }

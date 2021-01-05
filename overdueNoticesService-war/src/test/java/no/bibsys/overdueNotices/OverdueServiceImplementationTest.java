@@ -10,14 +10,6 @@ import no.bibsys.overdueNotices.OverdueServiceImplementation.OverdueLog;
 public class OverdueServiceImplementationTest {
 
 //	@Test
-	public void test() {
-		Map<String, String> testMap = new HashMap<>();
-		
-		System.out.println(testMap.get(null));
-	}
-
-	
-//	@Test
 	public void testLog(){
 		
 		OverdueServiceImplementation service = new OverdueServiceImplementation();

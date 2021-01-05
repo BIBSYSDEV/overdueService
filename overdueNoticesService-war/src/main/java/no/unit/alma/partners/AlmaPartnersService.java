@@ -51,31 +51,15 @@ public class AlmaPartnersService {
      */
     public Partners retrievePartners(String q, String status, String type, int limit, int offset) {
         WebTarget partnersTarget = webTarget.path(PARTNERS_PATH);
-
-        if (StringUtils.isEmpty(q) && StringUtils.isEmpty(status) && StringUtils.isEmpty(type)) {
-            return partnersTarget
-                    .request()
-                    .accept(MediaType.APPLICATION_XML)
-                    .buildGet()
-                    .invoke(Partners.class);
-        }
-
-        partnersTarget =
-                partnersTarget
-                        .queryParam("status", StringUtils.isEmpty(status) ? "ALL" : status);
-
-        if (StringUtils.isNotEmpty(q)) {
-            partnersTarget = partnersTarget.queryParam("q", q);
-        }
-        if (StringUtils.isNotEmpty(type)) {
-            partnersTarget = partnersTarget.queryParam("type", type);
-        }
         if (limit > -1) {
             partnersTarget = partnersTarget.queryParam("limit", limit);
         }
         if (offset > 0) {
             partnersTarget = partnersTarget.queryParam("offset", offset);
         }
+        partnersTarget =
+                partnersTarget
+                        .queryParam("status", StringUtils.isEmpty(status) ? "" : status);
 
         return partnersTarget
                 .request()

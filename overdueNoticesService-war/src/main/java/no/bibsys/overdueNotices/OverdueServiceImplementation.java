@@ -43,15 +43,16 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yogthos.JsonPDF;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lowagie.text.pdf.PdfPageEventHelper;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 
 import no.bibsys.overdueNotices.OverdueNotice.OverdueStatus;
-import no.unit.alma.analytics.AlmaAnalyticsService;
 import no.unit.alma.bibs.AlmaItemsService;
 import no.unit.alma.commons.AlmaClient;
 import no.unit.alma.generated.items.Item;
@@ -128,8 +129,9 @@ public class OverdueServiceImplementation implements OverdueService {
 
     private static final Map<String, Map<String, Location>> locationMap = new ConcurrentHashMap<>();
 
-    // TODO sett opp almaClient
-    private static final AlmaClient almaClient = null;
+	private static final String NB_BIBCODE = "g";
+	private Config config = ConfigFactory.load();
+    AlmaClient almaClient = new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE);
 
     private final Properties overdueProperties;
     boolean test = true;
@@ -700,6 +702,10 @@ public class OverdueServiceImplementation implements OverdueService {
 
         int timeoutCount = 60;
 
+        int offset = 0;
+        final int limit = 100;
+        int totalRecordsCount = -1;
+
         if(loading){
             do{
                 try {
@@ -716,50 +722,53 @@ public class OverdueServiceImplementation implements OverdueService {
         }
         Map<String, Location> locationsList = locationMap.get(libraryCode);
 
-        if(locationsList == null&&!loading){
+        if (locationsList == null&&!loading) {
             partnersLoading.add(libraryCode);
             locationsList = new ConcurrentHashMap<>();
             AlmaPartnersService partnerService = new AlmaPartnersService(almaClient);
-            // TODO finn ut hvordan retrievePartners kalles
-            Partners partnersResponse = partnerService.retrievePartners(null, null, null, 1, 100);
+            do {
+                Partners partnersResponse = partnerService.retrievePartners("", "", "", limit, offset);
+
+                totalRecordsCount = partnersResponse.getTotalRecordCount();
 
                 List<Partner> partnerList = partnersResponse.getPartner();
 
                 for (Partner partner : partnerList) {
+                    if (partner != null) {
+                        String name = partner.getPartnerDetails().getName();
+                        String code = partner.getPartnerDetails().getCode();
+                        try{
+                            Address address = partner.getContactInfo().getAddresses().getAddress().iterator().next();
+                            String postalCode = address.getPostalCode();
+                            String city = address.getCity();
+                            String adressLine = address.getLine1();
+                            List<Email> emailList = partner.getContactInfo().getEmails().getEmail();
 
-                if(partner != null){
-                    String name = partner.getPartnerDetails().getName();
-                    String code = partner.getPartnerDetails().getCode();
-                    try{
-                        Address address = partner.getContactInfo().getAddresses().getAddress().iterator().next();
-                        String postalCode = address.getPostalCode();
-                        String city = address.getCity();
-                        String adressLine = address.getLine1();
-                        List<Email> emailList = partner.getContactInfo().getEmails().getEmail();
-
-                        Location library = new Location();
-                        library.setName(name);
-                        library.setPostalCode(postalCode);
-                        library.setCity(city);
-                        library.setCode(code);
-                        library.setAddress(adressLine);
-                        library.setEmail("");
-                        if(emailList.size() > 0){
-                            for (Email email : emailList) {
-                                if(email.getEmailAddress() != null && !"".equals(email.getEmailAddress())){
-                                    library.setEmail(email.getEmailAddress().toLowerCase());
-                                    break;
+                            Location library = new Location();
+                            library.setName(name);
+                            library.setPostalCode(postalCode);
+                            library.setCity(city);
+                            library.setCode(code);
+                            library.setAddress(adressLine);
+                            library.setEmail("");
+                            if(emailList.size() > 0){
+                                for (Email email : emailList) {
+                                    if(email.getEmailAddress() != null && !"".equals(email.getEmailAddress())){
+                                        library.setEmail(email.getEmailAddress().toLowerCase());
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                        locationsList.put(code, library);
-                    }catch(Exception e){
+                            locationsList.put(code, library);
+                        }catch(Exception e){
 
+                        }
                     }
                 }
-            }
-            locationMap.put(libraryCode, locationsList);
-            partnersLoading.remove(libraryCode);
+                locationMap.put(libraryCode, locationsList);
+                partnersLoading.remove(libraryCode);
+                offset += 100;
+            } while (offset < totalRecordsCount);
             loading = false;
         }
 
