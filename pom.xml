@@ -140,20 +140,16 @@
                 <artifactId>jersey-container-servlet</artifactId>
                 <version>2.30.1</version>
             </dependency>
-                    
-			<dependency>
-                <groupId>com.wordnik</groupId>
-                <artifactId>swagger-jersey2-jaxrs_2.11</artifactId>
-                <scope>compile</scope>
-                <version>1.3.10</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.ws.rs</groupId>
-                        <artifactId>jsr311-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            
+		      <dependency>
+		        <groupId>no.bibsys</groupId>
+		        <artifactId>vault-client</artifactId>
+		        <version>1.0.8</version>
+		      </dependency>
+          <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.12.0</version>
+        </dependency>                           
             <!-- Test dependencies -->
             <dependency>
                 <groupId>junit</groupId>
@@ -175,7 +171,7 @@
             <dependency>
   				<groupId>json-to-pdf</groupId>
   				<artifactId>json-to-pdf</artifactId>
-  				<version>0.8.3</version>
+  				<version>0.7.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.quartz-scheduler</groupId>

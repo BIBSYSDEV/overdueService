@@ -647,7 +647,7 @@ public class OverdueServiceImplementation implements OverdueService {
 
         log.debug("pdf-file = " + pdfPath + fileName);
         try {
-            JsonPDF.writeToStream(new ByteArrayInputStream(pdfText.getBytes(Charset.forName("UTF-8"))), new FileOutputStream( pdfPath + fileName), null);
+            JsonPDF.writeToStream(new ByteArrayInputStream(pdfText.getBytes(Charset.forName("UTF-8"))), new FileOutputStream( pdfPath + fileName));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             log.error("--------------------------------------------------------");

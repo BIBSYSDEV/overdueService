@@ -13,17 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.wordnik.swagger.config.ConfigFactory;
-import com.wordnik.swagger.config.FilterFactory;
-import com.wordnik.swagger.config.ScannerFactory;
-import com.wordnik.swagger.config.SwaggerConfig;
-import com.wordnik.swagger.jaxrs.config.DefaultJaxrsScanner;
-import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader;
-import com.wordnik.swagger.model.ApiKey;
-import com.wordnik.swagger.reader.ClassReaders;
-
 import no.bibsys.http.HttpUtil;
-import no.bibsys.overdueNotices.HiddenParamFilter;
+// import no.bibsys.overdueNotices.HiddenParamFilter;
 
 /**
  * 
@@ -98,15 +89,15 @@ public class SwaggerJaxrsConfig implements Filter {
     }
 
     private void configSwagger(String basePath) {
-        SwaggerConfig swaggerConfig = new SwaggerConfig();
+        // SwaggerConfig swaggerConfig = new SwaggerConfig();
 
-        ApiKey apikey = new ApiKey("apikey", "apikey");
-        swaggerConfig.addAuthorization(apikey);
-        FilterFactory.setFilter(new HiddenParamFilter());
-        ConfigFactory.setConfig(swaggerConfig);
-        swaggerConfig.setBasePath(basePath);
-        swaggerConfig.setApiVersion("1.0.0");
-        ScannerFactory.setScanner(new DefaultJaxrsScanner());
-        ClassReaders.setReader(new DefaultJaxrsApiReader());
+        // ApiKey apikey = new ApiKey("apikey", "apikey");
+        // swaggerConfig.addAuthorization(apikey);
+        // FilterFactory.setFilter(new HiddenParamFilter());
+        // ConfigFactory.setConfig(swaggerConfig);
+        // swaggerConfig.setBasePath(basePath);
+        // swaggerConfig.setApiVersion("1.0.0");
+        // ScannerFactory.setScanner(new DefaultJaxrsScanner());
+        // ClassReaders.setReader(new DefaultJaxrsApiReader());
     }
 }

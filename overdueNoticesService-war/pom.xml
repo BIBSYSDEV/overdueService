@@ -419,15 +419,11 @@
         <dependency>
             <groupId>no.bibsys</groupId>
             <artifactId>vault-client</artifactId>
-            <version>1.0.8</version>
-            <exclusions>
-              <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-              </exclusion>
-            </exclusions>
           </dependency>
-    
+          <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>    
         <!-- Provided dependencies -->
         
         <dependency>
@@ -504,18 +500,12 @@
 			    <artifactId>quartz-jobs</artifactId>
 			</dependency>
             
-			<dependency>
-                <groupId>com.wordnik</groupId>
-                <artifactId>swagger-jersey2-jaxrs_2.11</artifactId>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.ws.rs</groupId>
-                        <artifactId>jsr311-api</artifactId>
-                    </exclusion>
-                </exclusions>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-jaxrs2</artifactId>
+                <version>2.1.6</version>
             </dependency>
-        <dependency>
+            <dependency>
         	<groupId>no.bibsys</groupId>
         	<artifactId>epostklient</artifactId>
             <exclusions>

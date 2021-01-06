@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class AnalyticsServiceImplementationTest {
 
-//	@Test
+	@Test
 	public void test() {
 
 		
@@ -16,11 +16,11 @@ public class AnalyticsServiceImplementationTest {
 //		OverdueService.Factory.instance().sendSecondNotice("NB");
 //		OverdueService.Factory.instance().sendThirdNotice("NB");
 
-//		List<String> claimsReport = OverdueService.Factory.instance().createClaimsReport("NB");
-//		System.out.println(claimsReport);
-//		for (String string : claimsReport) {
-//			System.out.println(string);
-//		}
+		List<String> claimsReport = OverdueService.Factory.instance().createClaimsReport("NB");
+		System.out.println(claimsReport);
+		for (String string : claimsReport) {
+			System.out.println(string);
+		}
 		
 //		List<OverdueNotice> report = AnalyticsService.Factory.instance().getAnalyticsReport("NB");
 //		

@@ -22,11 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 
 import no.bibsys.overdueNotices.OverdueAnalyticsService;
 import no.bibsys.overdueNotices.Location;
@@ -38,7 +33,6 @@ import no.bibsys.overdueNotices.OverdueService;
 
 
 @Path("/data")
-@Api(value = "/data", description = "Overdue data service")
 public class OverdueRestService {
 
 	private static final transient Logger log = LoggerFactory.getLogger(OverdueRestService.class);
@@ -62,14 +56,8 @@ public class OverdueRestService {
 	
 	@GET
 	@Path("/presentation/{library}/{barcode}")
-	@ApiOperation(
-			position=0, 
-			value = "Retrieve presentation of an overdue notice")
-	@ApiResponses( {
-		@ApiResponse( code = 200, message = "Success" ),
-	} )
 	@Produces("application/json; charset=UTF-8")
-	public Response getOverdueNoticePresentation(@ApiParam(value = "library", required = true) @PathParam("library") String library, @ApiParam(value = "barcode", required = true) @PathParam("barcode") String barcode){
+	public Response getOverdueNoticePresentation(@PathParam("library") String library, @PathParam("barcode") String barcode){
 
 
 		OverdueNotice overdueNotice =OverdueAnalyticsService.Factory.instance(institutionServiceHost).getOverdueNotice(barcode, library);
@@ -89,14 +77,8 @@ public class OverdueRestService {
 
 	@GET
 	@Path("/report/{library}/{location}")
-	@ApiOperation(
-			position=0, 
-			value = "Retrieve overdue notices from location")
-	@ApiResponses( {
-		@ApiResponse( code = 200, message = "Success" ),
-	} )
 	@Produces("application/json; charset=UTF-8")
-	public Response getReport(@ApiParam(value = "library", required = true) @PathParam("library") String library, @ApiParam(value = "location", required = true) @PathParam("location") String location){
+	public Response getReport(@PathParam("library") String library, @PathParam("location") String location){
 
 		ObjectMapper mapper = new ObjectMapper();
 		
@@ -123,15 +105,9 @@ public class OverdueRestService {
 
 	@GET
 	@Path("/claimsreport/{library}/{type}")
-	@ApiOperation(
-			position=0, 
-			value = "Returned items with claims")
-	@ApiResponses( {
-		@ApiResponse( code = 200, message = "Success" ),
-	} )
 	@Produces("application/json; charset=UTF-8")
-	public Response getReturnedClaimsReport(@ApiParam(value = "library", required = true) @PathParam("library") String library,
-			@ApiParam(value = "type", required = true) @PathParam("type") String type){
+	public Response getReturnedClaimsReport(@PathParam("library") String library,
+			@PathParam("type") String type){
 
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -170,14 +146,8 @@ public class OverdueRestService {
 
 	@GET
 	@Path("/locations/{library}")
-	@ApiOperation(
-			position=0, 
-			value = "Retrieve locations from library")
-	@ApiResponses( {
-		@ApiResponse( code = 200, message = "Success" ),
-	} )
 	@Produces("application/json; charset=UTF-8")
-	public Response getLocations(@ApiParam(value = "library", required = true) @PathParam("library") String library){
+	public Response getLocations(@PathParam("library") String library){
 
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -193,17 +163,11 @@ public class OverdueRestService {
 
 	@GET
 	@Path("/send/{type}/{library}/{location}")
-	@ApiOperation(
-			position=0, 
-			value = "Send notice by email")
-	@ApiResponses( {
-		@ApiResponse( code = 200, message = "Success" ),
-	})
 	@Produces("application/json; charset=UTF-8")
-	public Response sendEmail(@ApiParam(value = "library", required = true) @PathParam("library") String library,
-			@ApiParam(value = "location", required = true) @PathParam("location") String location,
-			@ApiParam(value = "type", required = true, allowableValues = "NOT_OVERDUE,FIRST_NOTICE,SECOND_NOTICE,THIRD_NOTICE,CLAIMS") @PathParam("type") String type,
-			@ApiParam(value = "email", required = true) @QueryParam("email") String email){
+	public Response sendEmail(@PathParam("library") String library,
+			@PathParam("location") String location,
+			@PathParam("type") String type,
+			@QueryParam("email") String email){
 
 		OverdueStatus statusType = OverdueStatus.findStatusByText(type); 
 
@@ -243,14 +207,8 @@ public class OverdueRestService {
 
 	@GET
 	@Path("/status/{library}")
-	@ApiOperation(
-			position=0, 
-			value = "Retrieve status from library")
-	@ApiResponses( {
-		@ApiResponse( code = 200, message = "Success" ),
-	})
 	@Produces("text/plain; charset=UTF-8")
-	public Response status(@ApiParam(value = "library", required = true) @PathParam("library") String library){
+	public Response status(@PathParam("library") String library){
 		
 		StringBuilder status = new StringBuilder("Status for " + library + "\n");
 		status.append("Items in buffer: " + OverdueService.Factory.instance().allItems(library).size()+ "\n");
@@ -266,15 +224,9 @@ public class OverdueRestService {
 
 	@GET
 	@Path("/csvreport/{library}/{location}")
-	@ApiOperation(
-			position=0, 
-			value = "Retrieve report as csv from library")
-	@ApiResponses( {
-		@ApiResponse( code = 200, message = "Success" ),
-	})
 	@Produces("text/plain; charset=UTF-8")
-	public Response csvReport(@ApiParam(value = "library", required = true) @PathParam("library") String library, 
-			@ApiParam(value = "location", required = true) @PathParam("location") String location){
+	public Response csvReport(@PathParam("library") String library, 
+			@PathParam("location") String location){
 		
 		String csvReport = OverdueService.Factory.instance().csvReport(library, location);
 		
@@ -283,15 +235,9 @@ public class OverdueRestService {
 	
 	@GET
 	@Path("/reset/{library}/{location}")
-	@ApiOperation(
-			position=0, 
-			value = "Reset fulfilment notes on items from location")
-	@ApiResponses( {
-		@ApiResponse( code = 200, message = "Success" ),
-	})
 	@Produces("text/plain; charset=UTF-8")
-	public Response resetNotes(@ApiParam(value = "library", required = true) @PathParam("library") String library, 
-			@ApiParam(value = "location", required = true) @PathParam("location") String location){
+	public Response resetNotes(@PathParam("library") String library, 
+			@PathParam("location") String location){
 
 				OverdueService.Factory.instance().resetNotes(library, location);
 				String reset = "Fulfilmentnotes reset"; 
@@ -302,16 +248,10 @@ public class OverdueRestService {
 	
 	@GET
 	@Path("/pdf/{library}/{lendingLocation}/{barcode}")
-	@ApiOperation(
-	        position=0, 
-	        value = "Reset fulfilment notes on items from location")
-	@ApiResponses( {
-	    @ApiResponse( code = 200, message = "Success" ),
-	})
 	@Produces("application/pdf; charset=UTF-8")
-	public Response createPdf(@ApiParam(value = "library", required = true) @PathParam("library") String library,
-	        @ApiParam(value = "lendingLocation", required = true) @PathParam("lendingLocation") String lendingLocation,
-	        @ApiParam(value = "barcode", required = true) @PathParam("barcode") String barcode){
+	public Response createPdf(@PathParam("library") String library,
+	        @PathParam("lendingLocation") String lendingLocation,
+	        @PathParam("barcode") String barcode){
 	    
 	    java.nio.file.Path pdfFile = OverdueService.Factory.instance().createPdf(library, lendingLocation, barcode);
 	    
@@ -328,8 +268,5 @@ public class OverdueRestService {
             e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity("Error creating pdf").type(MediaType.TEXT_HTML_TYPE).build();
         }
-	    
 	}
-	
-	
 }
