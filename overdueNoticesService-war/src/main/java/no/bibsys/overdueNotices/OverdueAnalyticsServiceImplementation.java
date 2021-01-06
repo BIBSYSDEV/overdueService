@@ -20,17 +20,28 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import no.bibsys.vault.AppRole;
+import no.bibsys.vault.VaultClient;
 import no.unit.alma.analytics.AlmaAnalyticsHelper;
 import no.unit.alma.analytics.AlmaAnalyticsService;
 import no.unit.alma.commons.AlmaClient;
+import no.unit.alma.commons.ApiAuthorizationService;
 
 public class OverdueAnalyticsServiceImplementation implements OverdueAnalyticsService {
 
 	private static final String NB_BIBCODE = "g";
 	private Config config = ConfigFactory.load();
+	private final VaultClient vaultClient = VaultClient.builder()
+		.withCredentials(AppRole.from(config.getString("analyticsRoleId"), config.getString("analyticsSecretId")))
+		.build();
+	private final ApiAuthorizationService apiAuthorizationService = ApiAuthorizationService.builder()
+		.vaultClient(vaultClient)
+		.environment(config.getString("analytics"))
+		.build();
     private AlmaAnalyticsService analyticsService = new AlmaAnalyticsService(
-        new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE)
-    );
+		new AlmaClient(JerseyClientBuilder.newClient(), 
+				config, apiAuthorizationService,
+                NB_BIBCODE));
 
 	private static final transient Logger log = LoggerFactory.getLogger(OverdueAnalyticsServiceImplementation.class);
 

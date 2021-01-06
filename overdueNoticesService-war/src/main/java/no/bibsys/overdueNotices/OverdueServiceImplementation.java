@@ -131,7 +131,6 @@ public class OverdueServiceImplementation implements OverdueService {
 
 	private static final String NB_BIBCODE = "g";
 	private Config config = ConfigFactory.load();
-    AlmaClient almaClient = new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE);
 
     private final Properties overdueProperties;
     boolean test = true;
@@ -725,7 +724,7 @@ public class OverdueServiceImplementation implements OverdueService {
         if (locationsList == null&&!loading) {
             partnersLoading.add(libraryCode);
             locationsList = new ConcurrentHashMap<>();
-            AlmaPartnersService partnerService = new AlmaPartnersService(almaClient);
+            AlmaPartnersService partnerService = new AlmaPartnersService(new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE));
             do {
                 Partners partnersResponse = partnerService.retrievePartners("", "", "", limit, offset);
 
@@ -809,7 +808,7 @@ public class OverdueServiceImplementation implements OverdueService {
     public Item retrieveItem(String barcode, String library) {
         Map<String, Item> myItemMap = this.libraryItemMap.computeIfAbsent(library, k -> new HashMap<>());
 
-        AlmaItemsService itemService = new AlmaItemsService(almaClient);
+        AlmaItemsService itemService = new AlmaItemsService(new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE));
 
         Item item = myItemMap.computeIfAbsent(barcode, v -> itemService.getItem(barcode));
 

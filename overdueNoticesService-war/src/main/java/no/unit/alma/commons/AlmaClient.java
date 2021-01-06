@@ -71,7 +71,6 @@ public class AlmaClient {
     public AlmaClient(Client client, Config config, ApiAuthorizationService apiAuthorizationService, String bibCode) {
         Objects.requireNonNull(client, "JAX-RS rest client must be provided");
         Objects.requireNonNull(apiAuthorizationService, "Alma API authorization is required");
-        System.out.println(config.getString("roleId") + " = " + config.getString("secretId"));
         VaultApiAuthorization apiAuthorization =
                 apiAuthorizationService.getApiAuthorization(bibCode);
 
