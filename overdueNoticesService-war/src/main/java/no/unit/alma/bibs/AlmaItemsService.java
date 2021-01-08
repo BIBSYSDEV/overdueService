@@ -88,12 +88,16 @@ public class AlmaItemsService {
      * @return Item record
      */
     public Item getItem(final String barcode) {
+    	try {
         return itemsTarget
                 .queryParam("item_barcode", barcode)
                 .request()
                 .accept(MediaType.APPLICATION_XML)
                 .buildGet()
                 .invoke(Item.class);
+    	} catch (Exception e) {
+    		return null;
+    	}
     }
 
     /**

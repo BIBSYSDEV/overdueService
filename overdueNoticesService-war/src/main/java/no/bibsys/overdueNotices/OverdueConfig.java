@@ -30,7 +30,7 @@ public class OverdueConfig {
 	private OverdueConfig() {
 		super();
 		loadProperties();
-		loadApiKeys();
+//		loadApiKeys();
 	}
 
 	private void loadProperties() {
@@ -47,16 +47,16 @@ public class OverdueConfig {
 	}
 
 
-	private void loadApiKeys() {
-		apikeys = new Properties();
-		String propertyFileName = "/fasehome/applikasjoner/almaws/institution.properties";
-		try {
-			apikeys.load(new FileReader(propertyFileName));
-		} catch (Exception e) {
-			log.error("Error loading apikey properties", e);
-			throw new RuntimeException("Failed to load apikey properties: " + propertyFileName);
-		}
-	}
+//	private void loadApiKeys() {
+//		apikeys = new Properties();
+//		String propertyFileName = "/fasehome/applikasjoner/almaws/institution.properties";
+//		try {
+//			apikeys.load(new FileReader(propertyFileName));
+//		} catch (Exception e) {
+//			log.error("Error loading apikey properties", e);
+//			throw new RuntimeException("Failed to load apikey properties: " + propertyFileName);
+//		}
+//	}
 
 	public Map<String, Set<String>> getInventoryMetadataMapping() {
 		Map<String, Set<String>> metadataMappings = new HashMap<>();
@@ -97,7 +97,7 @@ public class OverdueConfig {
 	}
 
 
-	public static String getApikey(String institutionId) {
-		return getInstance().apikeys.getProperty(institutionId);
-	}
+//	public static String getApikey(String institutionId) {
+//		return getInstance().apikeys.getProperty(institutionId);
+//	}
 }

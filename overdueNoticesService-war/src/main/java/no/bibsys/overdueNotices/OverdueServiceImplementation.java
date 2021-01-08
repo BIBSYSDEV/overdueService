@@ -238,6 +238,10 @@ public class OverdueServiceImplementation implements OverdueService {
 
     private void sendMail(String subject, String emailAdress, String from, String mailText, String customer, String... pdfs) {
 
+    	if(true)
+    		return;
+    	
+    	
         //Get the session object  
         Properties prop = System.getProperties();  
         prop.put("mail.smtp.host", mailServerHost);
@@ -376,7 +380,7 @@ public class OverdueServiceImplementation implements OverdueService {
 
     @Override
     public List<String> sendFirstNotice(String library, String locationName) {
-        return sendFirstNotice(library, locationName, "gs@bibsys.no"); // test
+        return sendFirstNotice(library, locationName, "en@unit.no"); // test
     }
     @Override
     public List<String> sendFirstNotice(String library, String locationName, String email) {

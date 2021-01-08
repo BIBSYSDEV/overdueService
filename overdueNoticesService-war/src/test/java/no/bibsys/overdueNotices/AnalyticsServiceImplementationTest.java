@@ -16,11 +16,13 @@ public class AnalyticsServiceImplementationTest {
 //		OverdueService.Factory.instance().sendSecondNotice("NB");
 //		OverdueService.Factory.instance().sendThirdNotice("NB");
 
-		List<String> claimsReport = OverdueService.Factory.instance().createClaimsReport("NB");
+		
+		
+		List<String> claimsReport = OverdueService.Factory.instance().sendFirstNotice("NB", "Publikumstjenesten");
 		System.out.println(claimsReport);
-		for (String string : claimsReport) {
-			System.out.println(string);
-		}
+//		for (String string : claimsReport) {
+//			System.out.println(string);
+//		}
 		
 //		List<OverdueNotice> report = AnalyticsService.Factory.instance().getAnalyticsReport("NB");
 //		
