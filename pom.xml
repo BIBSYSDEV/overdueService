@@ -11,11 +11,11 @@
     <version>1.0.23-SNAPSHOT</version>
     <name>overdueNoticesService</name>
     <scm>
-        <connection>scm:svn:https://svn.bibsys.no/dev/overdueNoticesService/trunk</connection>
+        <connection>scm:git:https://github.com/BIBSYSDEV/overdueService</connection>
         <!-- developerConnection requires a connection that will give write access -->
-        <developerConnection>scm:svn:https://svn.bibsys.no/dev/overdueNoticesService/trunk</developerConnection>
+        <developerConnection>scm:git:https://github.com/BIBSYSDEV/overdueService</developerConnection>
         <!-- A publicly browsable repository -->
-        <url>scm:svn:https://svn.bibsys.no/dev/overdueNoticesService/trunk</url>
+        <url>scm:git:https://github.com/BIBSYSDEV/overdueService</url>
     </scm>
     <properties>
         <version.jetty>9.4.9.v20180320</version.jetty>

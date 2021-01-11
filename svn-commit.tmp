@@ -1,0 +1,17 @@
+New version
+--This line, and those below, will be ignored--
+
+M    overdueNoticesService-functional-tests/pom.xml
+M    overdueNoticesService-war/logback-local.properties
+M    overdueNoticesService-war/pom.xml
+M    overdueNoticesService-war/src/main/java/no/bibsys/overdueNotices/HiddenParamFilter.java
+M    overdueNoticesService-war/src/main/java/no/bibsys/overdueNotices/OverdueConfig.java
+M    overdueNoticesService-war/src/main/java/no/bibsys/overdueNotices/OverdueNoticeImplementation.java
+M    overdueNoticesService-war/src/main/java/no/bibsys/overdueNotices/OverdueService.java
+M    overdueNoticesService-war/src/main/java/no/bibsys/overdueNotices/OverdueServiceImplementation.java
+M    overdueNoticesService-war/src/main/java/no/bibsys/overdueNotices/rest/OverdueRestService.java
+M    overdueNoticesService-war/src/main/java/no/bibsys/overdueNotices/rest/SwaggerJaxrsConfig.java
+M    overdueNoticesService-war/src/main/webapp/WEB-INF/web.xml
+M    overdueNoticesService-war/src/test/java/no/bibsys/overdueNotices/AnalyticsServiceImplementationTest.java
+M    overdueNoticesService-war/src/test/java/no/bibsys/overdueNotices/OverdueServiceImplementationTest.java
+M    pom.xml
