@@ -61,4 +61,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+.svn/
+
+overdueNoticesService-war/target/
+
 # End of https://www.toptal.com/developers/gitignore/api/java,windows,vscode
