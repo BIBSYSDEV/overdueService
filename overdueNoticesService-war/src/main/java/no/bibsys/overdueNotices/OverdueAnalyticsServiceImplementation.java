@@ -30,18 +30,7 @@ import no.unit.alma.commons.ApiAuthorizationService;
 public class OverdueAnalyticsServiceImplementation implements OverdueAnalyticsService {
 
 	private static final String NB_BIBCODE = "g";
-	private Config config = ConfigFactory.load();
-	private final VaultClient vaultClient = VaultClient.builder()
-		.withCredentials(AppRole.from(config.getString("analyticsRoleId"), config.getString("analyticsSecretId")))
-		.build();
-	private final ApiAuthorizationService apiAuthorizationService = ApiAuthorizationService.builder()
-		.vaultClient(vaultClient)
-		.environment(config.getString("analytics"))
-		.build();
-    private AlmaAnalyticsService analyticsService = new AlmaAnalyticsService(
-		new AlmaClient(JerseyClientBuilder.newClient(), 
-				config, apiAuthorizationService,
-                NB_BIBCODE));
+    private AlmaAnalyticsService analyticsService;
 
 	private static final transient Logger log = LoggerFactory.getLogger(OverdueAnalyticsServiceImplementation.class);
 
@@ -70,6 +59,18 @@ public class OverdueAnalyticsServiceImplementation implements OverdueAnalyticsSe
 			throw new RuntimeException("Unable to load ignored.properties");
 		}
 		
+		Config config = ConfigFactory.load();
+		VaultClient vaultClient = VaultClient.builder()
+			.withCredentials(AppRole.from(properties.getProperty("analyticsRoleId"), properties.getProperty("analyticsSecretId")))
+			.build();
+		ApiAuthorizationService apiAuthorizationService = ApiAuthorizationService.builder()
+			.vaultClient(vaultClient)
+			.environment("analytics")
+			.build();
+		analyticsService = new AlmaAnalyticsService(
+			new AlmaClient(JerseyClientBuilder.newClient(), 
+					config, apiAuthorizationService,
+					NB_BIBCODE));
 		analyticsPath = properties.getProperty("analytics_url");
 	}
 

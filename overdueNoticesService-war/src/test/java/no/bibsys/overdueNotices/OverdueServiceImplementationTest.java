@@ -9,7 +9,7 @@ import no.bibsys.overdueNotices.OverdueServiceImplementation.OverdueLog;
 
 public class OverdueServiceImplementationTest {
 
-	@Test
+	// @Test
 	public void testSendMail() {
 		OverdueService overdueServiceImplementation = new OverdueServiceImplementation();
 		overdueServiceImplementation.allItems("g").forEach(item -> System.out.println(item));;

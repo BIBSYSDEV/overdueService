@@ -53,8 +53,11 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import no.bibsys.overdueNotices.OverdueNotice.OverdueStatus;
+import no.bibsys.vault.AppRole;
+import no.bibsys.vault.VaultClient;
 import no.unit.alma.bibs.AlmaItemsService;
 import no.unit.alma.commons.AlmaClient;
+import no.unit.alma.commons.ApiAuthorizationService;
 import no.unit.alma.generated.items.Item;
 import no.unit.alma.generated.partners.Address;
 import no.unit.alma.generated.partners.Email;
@@ -728,7 +731,16 @@ public class OverdueServiceImplementation implements OverdueService {
         if (locationsList == null&&!loading) {
             partnersLoading.add(libraryCode);
             locationsList = new ConcurrentHashMap<>();
-            AlmaPartnersService partnerService = new AlmaPartnersService(new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE));
+
+            VaultClient vaultClient = VaultClient.builder()
+	    		.withCredentials(AppRole.from(overdueProperties.getProperty("roleId"), overdueProperties.getProperty("secretId")))
+		    	.build();
+    		ApiAuthorizationService apiAuthorizationService = ApiAuthorizationService.builder()
+			.vaultClient(vaultClient)
+			.environment(overdueProperties.getProperty("environment"))
+			.build();
+
+            AlmaPartnersService partnerService = new AlmaPartnersService(new AlmaClient(JerseyClientBuilder.newClient(), config, apiAuthorizationService, NB_BIBCODE));
             do {
                 Partners partnersResponse = partnerService.retrievePartners("", "", "", limit, offset);
 
@@ -812,7 +824,15 @@ public class OverdueServiceImplementation implements OverdueService {
     public Item retrieveItem(String barcode, String library) {
         Map<String, Item> myItemMap = this.libraryItemMap.computeIfAbsent(library, k -> new HashMap<>());
 
-        AlmaItemsService itemService = new AlmaItemsService(new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE));
+        VaultClient vaultClient = VaultClient.builder()
+            .withCredentials(AppRole.from(overdueProperties.getProperty("roleId"), overdueProperties.getProperty("secretId")))
+            .build();
+        ApiAuthorizationService apiAuthorizationService = ApiAuthorizationService.builder()
+            .vaultClient(vaultClient)
+            .environment(overdueProperties.getProperty("environment"))
+            .build();
+
+        AlmaItemsService itemService = new AlmaItemsService(new AlmaClient(JerseyClientBuilder.newClient(), config, apiAuthorizationService, NB_BIBCODE));
 
         Item item = myItemMap.computeIfAbsent(barcode, v -> itemService.getItem(barcode));
 

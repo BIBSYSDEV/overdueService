@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class AnalyticsServiceImplementationTest {
 
-	@Test
+	// @Test
 	public void test() {
 
 		

@@ -16,8 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.bibsys.overdueNotices.OverdueServiceImplementation.OverdueLog;
+import no.bibsys.vault.AppRole;
+import no.bibsys.vault.VaultClient;
 import no.unit.alma.bibs.AlmaItemsService;
 import no.unit.alma.commons.AlmaClient;
+import no.unit.alma.commons.ApiAuthorizationService;
 import no.unit.alma.generated.items.Item;
 
 public class OverdueNoticeImplementation implements OverdueNotice {
@@ -56,7 +59,7 @@ public class OverdueNoticeImplementation implements OverdueNotice {
 
 	private static final String NB_BIBCODE = "g";
 	private Config config = ConfigFactory.load();
-	AlmaClient almaClient = new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE);
+	// AlmaClient almaClient = new AlmaClient(JerseyClientBuilder.newClient(), config, NB_BIBCODE);
 
 	public OverdueNoticeImplementation(String barcode, String dueDateString, String sentDateString,
 			String lendingDateString, String lendingLibraryEmail, String title, String author, String year,
@@ -212,7 +215,18 @@ public class OverdueNoticeImplementation implements OverdueNotice {
 
 	private void updateFulfilmentNote(String barcode, OverdueStatus status) {
 		try {
-			AlmaItemsService itemService = new AlmaItemsService(almaClient);
+            VaultClient vaultClient = VaultClient.builder()
+	    		.withCredentials(AppRole.from(overdueProperties.getProperty("roleId"), overdueProperties.getProperty("secretId")))
+		    	.build();
+    		ApiAuthorizationService apiAuthorizationService = ApiAuthorizationService.builder()
+			.vaultClient(vaultClient)
+			.environment(overdueProperties.getProperty("environment"))
+			.build();
+
+
+			AlmaItemsService itemService = new AlmaItemsService(new AlmaClient(JerseyClientBuilder.newClient(), 
+				config, apiAuthorizationService,
+				NB_BIBCODE));
 			Item itemRecord = itemService.getItem(barcode);
 
 			String fulfillmentNote = itemRecord.getItemData().getFulfillmentNote();
