@@ -148,7 +148,7 @@ public class OverdueServiceImplementation implements OverdueService {
 
     private static final OverdueNoticeScheduler scheduler = new OverdueNoticeScheduler();
 
-    private static final String mailServerHost = "mail.bibsys.no";
+    private static final String mailServerHost = "smtp.bibsys.no";
 
     private static final String mailServerPort = "25";
 
@@ -746,18 +746,18 @@ public class OverdueServiceImplementation implements OverdueService {
 
                 totalRecordsCount = partnersResponse.getTotalRecordCount();
 
-                List<Partner> partnerList = partnersResponse.getPartner();
+                List<Partner> partnerList = partnersResponse.getPartners();
 
                 for (Partner partner : partnerList) {
                     if (partner != null) {
                         String name = partner.getPartnerDetails().getName();
                         String code = partner.getPartnerDetails().getCode();
                         try{
-                            Address address = partner.getContactInfo().getAddresses().getAddress().iterator().next();
+                            Address address = partner.getContactInfo().getAddresses().getAddresses().iterator().next();
                             String postalCode = address.getPostalCode();
                             String city = address.getCity();
                             String adressLine = address.getLine1();
-                            List<Email> emailList = partner.getContactInfo().getEmails().getEmail();
+                            List<Email> emailList = partner.getContactInfo().getEmails().getEmails();
 
                             Location library = new Location();
                             library.setName(name);

@@ -579,7 +579,7 @@ public class AlmaItemsService {
      */
     public UserRequest updateCommentOnRequest(String barcode, String requestId, String comment,
             boolean appendToExistingComment) {
-        final List<UserRequest> requestsFromItem = getRequestsFromItem(barcode, false).getUserRequest();
+        final List<UserRequest> requestsFromItem = getRequestsFromItem(barcode, false).getUserRequests();
         UserRequest updatingRequest = null;
         for (UserRequest request : requestsFromItem) {
             if (request.getRequestId().equals(requestId)) {
