@@ -86,6 +86,8 @@ public class OverdueAnalyticsServiceImplementation implements OverdueAnalyticsSe
 		List<OverdueNotice> result = new ArrayList<>();
 		if(analyticsReport == null||analyticsReport.date.getTime() < (new Date().getTime() - 24*60*60*100)){
 
+			int counter = 0;
+			
 			List<Map<String,String>> report = new AlmaAnalyticsHelper(analyticsService).retrieveAnalyticsReport(analyticsPath, "");
 			if(report != null){
 				for (Map<String, String> map : report) {
@@ -108,10 +110,13 @@ public class OverdueAnalyticsServiceImplementation implements OverdueAnalyticsSe
 					if(!ignoredLocations.contains(libraryID) && barcode != null && !"".equals(barcode.trim())){
 						result.add(OverdueNotice.Factory.create(barcode, dueDateString, "", lendingDateString, lendingLibraryEmail, title, author, year, publisherPlace, publisher, library , requestId, location, locationCode, libraryID));
 					}
+					counter++;
+					if(counter == 500) break;
 				}
 
 				analyticsReport = new AnalyticsReport(new Date(), result);
 				analyticsReportMap.put(library, analyticsReport);
+				
 			}
 		}else{
 			result = new ArrayList<OverdueNotice> (analyticsReport.reportMap.values());

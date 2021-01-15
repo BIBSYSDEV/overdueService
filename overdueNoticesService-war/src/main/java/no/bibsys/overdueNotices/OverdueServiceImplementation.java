@@ -241,10 +241,6 @@ public class OverdueServiceImplementation implements OverdueService {
 
     private void sendMail(String subject, String emailAdress, String from, String mailText, String customer, String... pdfs) {
 
-    	if(true)
-    		return;
-    	
-    	
         //Get the session object  
         Properties prop = System.getProperties();  
         prop.put("mail.smtp.host", mailServerHost);
@@ -554,7 +550,7 @@ public class OverdueServiceImplementation implements OverdueService {
 
     @Override
     public List<String> sendThirdNotice(String library, String locationName) {
-        return sendThirdNotice(library, locationName, "gs@bibsys.no"); // test
+        return sendThirdNotice(library, locationName, "eirik.nilsen@unit.no"); // test
     }
     @Override
     public List<String> sendThirdNotice(String library, String locationName, String email) {
@@ -627,9 +623,17 @@ public class OverdueServiceImplementation implements OverdueService {
                         recipient = email;
                     }
 
-
                     String pdfFile = createPdfFile(pdfText, library, pdfPath);
-                    sendMail(title.replace("{Laaneavdeling}", location.getName()), recipient, location.getEmail(), text, library, pdfFile);
+                    try {
+                    	sendMail(title.replace("{Laaneavdeling}", location.getName()), recipient, location.getEmail(), text, library, pdfFile);
+                    } catch (Exception e) {
+                    	try {
+							Files.write(Paths.get(String.format("/overdue/%s", recipient)), Arrays.asList(new String[]{text}));
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+                    	e.printStackTrace();
+                    }
 
                     try {
                         Files.delete(Paths.get(pdfFile));
@@ -653,7 +657,7 @@ public class OverdueServiceImplementation implements OverdueService {
 
         log.debug("pdf-file = " + pdfPath + fileName);
         try {
-            JsonPDF.writeToStream(new ByteArrayInputStream(pdfText.getBytes(Charset.forName("UTF-8"))), new FileOutputStream( pdfPath + fileName));
+            JsonPDF.writeToStream(new ByteArrayInputStream(pdfText.getBytes(Charset.forName("UTF-8"))), new FileOutputStream( pdfPath + fileName), null);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             log.error("--------------------------------------------------------");
